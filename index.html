@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Test</title>
+</head>
+<body>
+    <div style="width: 60%;margin:auto;margin-top:20px">
+        <video src="" id="recorded-video" style="width: 100%;aspect-ratio:16/9;" autoplay muted playsinline></video>
+    </div>
+    <textarea name="base64" id="base64" placeholder="paste base64 string..." cols="50" rows="20"></textarea>
+        <!-- <textarea name="" id="" cols="30" rows="10"></textarea> -->
+    <button id="clickme">Preview</button>
+</body>
+<script>
+    const recVideo = document.getElementById('recorded-video');
+    const clickMe = document.getElementById('clickme');
+    const field = document.getElementById('base64');
+    clickMe.addEventListener('click',(event)=>{
+        event.stopImmediatePropagation();
+        var b64 = field.value;
+        if(b64!=null&&b64!=''){
+            const byteCharacters = atob(b64.replace(/^data:video\/(webm|mp4|mpeg);base64,/, ''));
+                  const byteNumbers = new Array(byteCharacters.length);
+                  for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                  }
+                  const byteArray = new Uint8Array(byteNumbers);
+                  const blob = new Blob([byteArray], {type: 'video/webm'});
+                  recData = URL.createObjectURL(blob);
+
+                  (async function vidLoop(){
+                      recVideo.src = recData;
+                      setTimeout(()=>{
+                        vidLoop();
+                      },6000);
+                  })();
+        }
+    });
+</script>
+</html>
